@@ -1,14 +1,28 @@
-// src/components/TenantManagement.js
+// src/components/TenantManagement.js (Cập nhật)
 import React, { useState } from 'react';
 
 const TenantManagement = () => {
     const [tenant, setTenant] = useState({ name: '', phone: '', email: '', roomNumber: '' });
     const [tenants, setTenants] = useState([]);
+    const [editIndex, setEditIndex] = useState(null);
 
     const handleAddTenant = () => {
-        setTenants([...tenants, tenant]);
+        if (editIndex !== null) {
+            const updatedTenants = [...tenants];
+            updatedTenants[editIndex] = tenant;
+            setTenants(updatedTenants);
+            setEditIndex(null);
+            alert('Thông tin khách thuê đã được cập nhật!');
+        } else {
+            setTenants([...tenants, tenant]);
+            alert('Khách thuê đã được thêm!');
+        }
         setTenant({ name: '', phone: '', email: '', roomNumber: '' });
-        alert('Khách thuê đã được thêm!');
+    };
+
+    const handleEditTenant = (index) => {
+        setTenant(tenants[index]);
+        setEditIndex(index);
     };
 
     return (
@@ -44,9 +58,23 @@ const TenantManagement = () => {
                     onChange={(e) => setTenant({ ...tenant, roomNumber: e.target.value })}
                 />
                 <button className="btn btn-primary mt-2" onClick={handleAddTenant}>
-                    Thêm khách thuê
+                    {editIndex !== null ? 'Cập nhật khách thuê' : 'Thêm khách thuê'}
                 </button>
             </div>
+            <h3>Danh sách khách thuê</h3>
+            <ul className="list-group">
+                {tenants.map((t, index) => (
+                    <li key={index} className="list-group-item d-flex justify-content-between">
+                        {t.name} - {t.phone} - {t.email} - Phòng: {t.roomNumber}
+                        <button
+                            className="btn btn-warning btn-sm"
+                            onClick={() => handleEditTenant(index)}
+                        >
+                            Sửa
+                        </button>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };
